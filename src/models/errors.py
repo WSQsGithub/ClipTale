@@ -4,6 +4,10 @@ class ClipLabelerError(Exception):
     pass
 
 
+class VideoFormatNotSupportedError(ClipLabelerError, ValueError):
+    message = "Video format not supported: {file_extension}, supported formats are: {supported_formats}"
+
+
 class VideoFileNotFoundError(ClipLabelerError, FileNotFoundError):
     message = "Video file not found: {file_path}"
 

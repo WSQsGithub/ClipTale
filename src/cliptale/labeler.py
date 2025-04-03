@@ -24,6 +24,8 @@ class ClipLabeler:
         duration_limit: Maximum duration in seconds to analyze from start/end of clip
     """
 
+    SUPPORTED_VIDEO_EXTENSIONS = (".mp4", ".avi", ".mov", ".mkv")
+
     def __init__(self, file_path: Path, duration_limit: Duration_s = DEFAULT_DURATION_LIMIT) -> None:
         """Initialize ClipLabeler with video file path and analysis duration limit.
 
@@ -34,12 +36,19 @@ class ClipLabeler:
         """
         if not file_path.exists():
             raise VideoFileNotFoundError(VideoFileNotFoundError.message.format(file_path=file_path))
+        if file_path.suffix not in self.SUPPORTED_VIDEO_EXTENSIONS:
+            raise VideoFileNotFoundError(
+                VideoFileNotFoundError.message.format(
+                    file_path=file_path, supported_formats=self.SUPPORTED_VIDEO_EXTENSIONS
+                )
+            )
         if duration_limit <= 0:
             raise InvalidDurationError(InvalidDurationError.message)
 
         self.file_path = file_path
         self.rename_template: Optional[str] = None
         self.duration_limit: Duration_s = duration_limit
+        self.video = None
 
     def add_template(self, template: str) -> None:
         """Set the template string for renaming labeled files.
