@@ -38,6 +38,11 @@ docs-test: ## Test if documentation can be built without warnings or errors
 docs: ## Build and serve the documentation
 	@uv run mkdocs serve
 
+.PHONY: build-macos
+build-macos: ## Build macOS executable with PyInstaller
+	@echo "🚀 Building macOS executable with PyInstaller"
+	@pyinstaller --onefile --windowed --name ClipTale --icon assets/logo.icns gui/ui.py
+
 .PHONY: help
 help:
 	@uv run python -c "import re; \
