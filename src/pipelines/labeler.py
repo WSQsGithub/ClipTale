@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from src.cliptale.cliplabeler import ClipLabeler
+from src.utils.logging import LoggerFactory
 
 
 class LabelerPipeline:
@@ -10,6 +11,7 @@ class LabelerPipeline:
         self.file_paths: list[Path] = []
         self.rename_template = rename_template
         self.results = dict[str, Any]  # Placeholder for results
+        self.logger = LoggerFactory.get_logger()
 
         _ = self.read_directory()
 
@@ -26,10 +28,14 @@ class LabelerPipeline:
                 file_paths.append(file_path)
         self.file_paths = file_paths
 
+        self.logger.info(f"Found {len(file_paths)} files in {self.work_dir}")
+        self.logger.debug(f"Files: {file_paths}")
+
         return file_paths
 
     async def run(self) -> None:
         # read all files in the work_dir
+        self.logger.info(f"Starting LabelerPipeline with {len(self.file_paths)} files.")
         for file_path in self.file_paths:
             clip_labeler = ClipLabeler(file_path)
             if self.rename_template:

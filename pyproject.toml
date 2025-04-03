@@ -11,6 +11,9 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = [
+    "dotenv>=0.9.9",
+]
 
 [project.urls]
 Homepage = "https://WSQsGithub.github.io/ClipTale/"
