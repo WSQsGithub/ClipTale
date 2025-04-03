@@ -1,6 +1,6 @@
 import cProfile
 
-from gui.splash_screen import start_app
+from .splash_screen import start_app
 
 if __name__ == "__main__":
     profiler = cProfile.Profile()
