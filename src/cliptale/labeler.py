@@ -3,7 +3,11 @@ from typing import NewType, Optional
 
 import ffmpeg
 
+from agents import Runner
+from src.agents import LabelerAgent
 from src.models.errors import (
+    AgentCallError,
+    AudioFileNotFoundError,
     InvalidDurationError,
     InvalidTemplateError,
     NoTemplateError,
@@ -54,7 +58,8 @@ class ClipLabeler:
         self.file_path = file_path
         self.rename_template: Optional[str] = None
         self.duration_limit: Duration_s = duration_limit
-        self.video = None
+        self.audio_path: Optional[Path] = None
+        self.labeler_agent = LabelerAgent()
 
     def add_template(self, template: str) -> None:
         """Set the template string for renaming labeled files.
@@ -80,16 +85,25 @@ class ClipLabeler:
         except ffmpeg.Error as e:
             raise ffmpeg.Error(f"Failed to extract audio: {e.stderr.decode()}", stdout=e.stdout, stderr=e.stderr) from e  # noqa: TRY003
         else:
+            self.audio_path = start_audio_path
             return start_audio_path
 
-    def generate_label(self) -> str:
-        """Generate a label by analyzing the extracted audio segments.
+    async def generate_label(self) -> str:
+        """Generate a label by analyzing the extracted audio segment's text content.
 
         Returns:
             Generated label string
         """
         # pass the audio to the model and generate a label
-        return ""
+        if not self.audio_path:
+            raise AudioFileNotFoundError(AudioFileNotFoundError.message.format(file_path=self.file_path))
+        try:
+            agent_input = self.audio_text
+            result = await Runner.run(starting_agent=self.labeler_agent, input=agent_input)
+        except Exception as e:
+            raise AgentCallError(AgentCallError.message.format(error_message=str(e))) from e
+        else:
+            return result.final_output
 
     def save_label(self, label: str) -> None:
         """Save the generated label to file.

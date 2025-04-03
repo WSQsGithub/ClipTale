@@ -1,3 +1,7 @@
+class AgentCallError(Exception):
+    message = "Error calling agent: {error_message}"
+
+
 class ClipLabelerError(Exception):
     """Base exception class for ClipLabeler errors."""
 
@@ -22,3 +26,7 @@ class InvalidTemplateError(ClipLabelerError, ValueError):
 
 class NoTemplateError(ClipLabelerError, ValueError):
     message = "No rename template set - call add_template() first"
+
+
+class AudioFileNotFoundError(ClipLabelerError, FileNotFoundError):
+    message = "Audio file not found for video: {file_path}"
