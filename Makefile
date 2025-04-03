@@ -41,7 +41,7 @@ docs: ## Build and serve the documentation
 .PHONY: build-macos
 build-macos: ## Build macOS executable with PyInstaller
 	@echo "🚀 Building macOS executable with PyInstaller"
-	@pyinstaller --onefile --windowed --name ClipTale --icon assets/logo.icns gui/ui.py
+	@pyinstaller --onefile --windowed --name ClipTale --icon assets/logo.icns src/gui/ui.py
 
 .PHONY: help
 help:
