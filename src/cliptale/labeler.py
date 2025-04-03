@@ -5,6 +5,7 @@ from src.models.errors import (
     InvalidDurationError,
     InvalidTemplateError,
     NoTemplateError,
+    VideoExtensionNotSupportedError,
     VideoFileNotFoundError,
 )
 
@@ -37,7 +38,7 @@ class ClipLabeler:
         if not file_path.exists():
             raise VideoFileNotFoundError(VideoFileNotFoundError.message.format(file_path=file_path))
         if file_path.suffix not in self.SUPPORTED_VIDEO_EXTENSIONS:
-            raise VideoFileNotFoundError(
+            raise VideoExtensionNotSupportedError(
                 VideoFileNotFoundError.message.format(
                     file_path=file_path, supported_formats=self.SUPPORTED_VIDEO_EXTENSIONS
                 )
