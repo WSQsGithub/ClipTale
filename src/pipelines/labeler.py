@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Optional
 
-from src.cliptale.cliplabeler import ClipLabeler
+from src.cliptale.labeler import ClipLabeler
 from src.utils.logging import LoggerFactory
 
 
