@@ -14,6 +14,7 @@ classifiers = [
 dependencies = [
     "customtkinter>=5.2.2",
     "dotenv>=0.9.9",
+    "ffmpeg-python>=0.2.0",
     "openai>=1.70.0",
     "openai-agents>=0.0.7",
     "rich>=14.0.0",
