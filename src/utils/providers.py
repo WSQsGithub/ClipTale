@@ -76,10 +76,12 @@ class CustomModelProvider(ModelProvider):
             >>> provider = OpenAIProvider()
             >>> model = provider.get_model("gpt-4")
         """
-        return OpenAIChatCompletionsModel(model=model_name, openai_client=self.client)
+        if model_name is None:
+            model_name = self.MODEL_NAME
+        return OpenAIChatCompletionsModel(model=model_name, openai_client=self.client)  # type: ignore # noqa: PGH003
 
 
-async def main():
+async def main() -> None:
     from agents import Agent, Runner
 
     agent = Agent(name="Assistant", instructions="You only respond in haikus.")
