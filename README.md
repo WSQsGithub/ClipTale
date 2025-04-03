@@ -26,6 +26,4 @@ This is the repo for **ClipTale**, a desktop app that helps video content makers
 
 We welcome contributions! Please read our [contributing guide](CONTRIBUTING.md) for more information.
 
-<a href="https://www.buymeacoffee.com/siqi" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" width="200">
-</a>
+<a href="https://www.buymeacoffee.com/siqi"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=siqi&button_colour=5F7FFF&font_colour=ffffff&font_family=Cookie&outline_colour=000000&coffee_colour=FFDD00" /></a>
