@@ -13,7 +13,7 @@ class PrettyFormatter(logging.Formatter):
         "ENDC": "\033[0m",
     }  # RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
 
-    def format(self, record: logging.LogRecord):
+    def format(self, record: logging.LogRecord) -> str:
         formatted_record = super().format(record)
         color_prefix = self.COLORS[record.levelname]
         color_suffix = self.COLORS["ENDC"]
@@ -24,13 +24,13 @@ class LoggerFactory:
     _instance = None
 
     @classmethod
-    def get_logger(cls):
+    def get_logger(cls) -> logging.Logger:
         if not cls._instance:
             cls._instance = cls._setup_logger()
         return cls._instance
 
     @staticmethod
-    def _setup_logger():
+    def _setup_logger() -> logging.Logger:
         logger = logging.getLogger("cliptale")
 
         # Console handler with pretty formatting
