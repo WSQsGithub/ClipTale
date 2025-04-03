@@ -14,6 +14,7 @@ classifiers = [
 dependencies = [
     "customtkinter>=5.2.2",
     "dotenv>=0.9.9",
+    "openai-agents>=0.0.7",
 ]
 
 [project.urls]
