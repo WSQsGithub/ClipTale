@@ -59,6 +59,7 @@ class ClipLabeler:
         self.rename_template: Optional[str] = None
         self.duration_limit: Duration_s = duration_limit
         self.audio_path: Optional[Path] = None
+        self.audio_text: Optional[str] = None
         self.labeler_agent = LabelerAgent()
 
     def add_template(self, template: str) -> None:
@@ -88,14 +89,14 @@ class ClipLabeler:
             self.audio_path = start_audio_path
             return start_audio_path
 
-    async def generate_label(self) -> str:
+    async def generate_label(self) -> Optional[str]:
         """Generate a label by analyzing the extracted audio segment's text content.
 
         Returns:
             Generated label string
         """
         # pass the audio to the model and generate a label
-        if not self.audio_path:
+        if not self.audio_text:
             raise AudioFileNotFoundError(AudioFileNotFoundError.message.format(file_path=self.file_path))
         try:
             agent_input = self.audio_text
@@ -103,9 +104,9 @@ class ClipLabeler:
         except Exception as e:
             raise AgentCallError(AgentCallError.message.format(error_message=str(e))) from e
         else:
-            return result.final_output
+            return result.final_output_as(str)
 
-    def save_label(self, label: str) -> None:
+    def save_label(self, label: Optional[str]) -> None:
         """Save the generated label to file.
 
         Args:
@@ -113,5 +114,6 @@ class ClipLabeler:
         """
         if not self.rename_template:
             raise NoTemplateError(NoTemplateError.message)
-        # Placeholder for saving label logic
+        if not label:
+            label = self.file_path.stem
         pass
