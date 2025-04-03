@@ -1,28 +1,12 @@
 from pathlib import Path
 from typing import NewType, Optional
 
-
-class ClipLabelerError(Exception):
-    """Base exception class for ClipLabeler errors."""
-
-    pass
-
-
-class VideoFileNotFoundError(ClipLabelerError, FileNotFoundError):
-    message = "Video file not found: {file_path}"
-
-
-class InvalidDurationError(ClipLabelerError, ValueError):
-    message = "Duration limit must be positive"
-
-
-class InvalidTemplateError(ClipLabelerError, ValueError):
-    message = "Template must contain '{label}' placeholder"
-
-
-class NoTemplateError(ClipLabelerError, ValueError):
-    message = "No rename template set - call add_template() first"
-
+from src.models.errors import (
+    InvalidDurationError,
+    InvalidTemplateError,
+    NoTemplateError,
+    VideoFileNotFoundError,
+)
 
 # Type alias for duration in seconds to improve type safety and readability
 Duration_s = NewType("Duration_s", int)
