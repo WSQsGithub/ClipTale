@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from src.cliptale.labeler import ClipLabeler
-from utils.loggers import LoggerFactory
+from src.utils.loggers import LoggerFactory
 
 
 class LabelerPipeline:

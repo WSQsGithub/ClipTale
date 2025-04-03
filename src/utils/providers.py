@@ -12,16 +12,33 @@ from agents import (
     set_tracing_disabled,
 )
 
-BASE_URL = os.getenv("LLM_BASE_URL") or ""
-API_KEY = os.getenv("LLM_API_KEY") or ""
-MODEL_NAME = os.getenv("LLM_MODEL_NAME") or ""
-
 
 def set_global_provider() -> None:
     """
-    Set the LLM provider to OpenAI.
-    This function will effect all the agents and tools.
+    This function configures the global OpenAI client settings using environment variables.
+    It sets up an async OpenAI client with the provided base URL and API key, and configures
+    it as the default client for all agents and tools.
+
+    Environment Variables:
+        LLM_BASE_URL: Base URL for the OpenAI API endpoint
+        LLM_API_KEY: API key for authentication with OpenAI
+
+    Raises:
+        ValueError: If LLM_BASE_URL or LLM_API_KEY environment variables are not set
+
+    Returns:
+        None
+
+    Example:
+        >>> set_global_provider()
+        # Sets up OpenAI client globally using environment variables
     """
+    BASE_URL = os.getenv("LLM_BASE_URL")
+    API_KEY = os.getenv("LLM_API_KEY")
+
+    if not BASE_URL or not API_KEY:
+        raise ValueError("Please set LLM_BASE_URL and LLM_API_KEY via env var.")  # noqa: TRY003
+
     client = AsyncOpenAI(
         base_url=BASE_URL,
         api_key=API_KEY,
@@ -33,8 +50,10 @@ def set_global_provider() -> None:
 
 class CustomModelProvider(ModelProvider):
     def __init__(self, BASE_URL: Optional[str] = None, API_KEY: Optional[str] = None) -> None:
-        self.BASE_URL = BASE_URL or os.getenv("LLM_BASE_URL")
-        self.API_KEY = API_KEY or os.getenv("LLM_API_KEY")
+        self.BASE_URL = os.getenv("LLM_BASE_URL")
+        self.API_KEY = os.getenv("LLM_API_KEY")
+        self.MODEL_NAME = os.getenv("LLM_MODEL_NAME")
+
         if not self.BASE_URL or not self.API_KEY or not self.MODEL_NAME:
             raise ValueError("Please set LLM_BASE_URL, LLM_API_KEY, LLM_MODEL_NAME via env var or code.")  # noqa: TRY003
 
@@ -44,7 +63,20 @@ class CustomModelProvider(ModelProvider):
         )
 
     def get_model(self, model_name: Optional[str] = None) -> Model:
-        return OpenAIChatCompletionsModel(model=model_name or MODEL_NAME, openai_client=self.client)
+        """
+        Retrieves an OpenAI chat completion model instance.
+
+        Args:
+            model_name (Optional[str]): The name of the OpenAI model to use. If None, uses the default model.
+
+        Returns:
+            Model: An instance of OpenAIChatCompletionsModel configured with the specified model name and client.
+
+        Example:
+            >>> provider = OpenAIProvider()
+            >>> model = provider.get_model("gpt-4")
+        """
+        return OpenAIChatCompletionsModel(model=model_name, openai_client=self.client)
 
 
 async def main():
