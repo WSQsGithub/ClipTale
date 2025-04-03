@@ -1,12 +1,17 @@
 from pathlib import Path
 from typing import NewType, Optional
 
+import ffmpeg
+
 from src.models.errors import (
     InvalidDurationError,
     InvalidTemplateError,
     NoTemplateError,
     VideoExtensionNotSupportedError,
     VideoFileNotFoundError,
+)
+from src.utils.config import (
+    TMP_DIR,
 )
 
 # Type alias for duration in seconds to improve type safety and readability
@@ -61,17 +66,21 @@ class ClipLabeler:
             raise InvalidTemplateError(InvalidTemplateError.message)
         self.rename_template = template
 
-    def read_video(self) -> None:
-        """Read and validate the video file."""
-        # Placeholder for video reading logic
-        pass
-
-    def extract_audio(self) -> None:
+    def extract_audio(self) -> Optional[Path]:
         """Extract audio segments from start and end of video.
 
-        Extracts the first and last self.duration_limit seconds of audio.
+        Extracts the first self.duration_limit seconds of audio.
         """
-        pass
+        base_name = self.file_path.stem
+        start_audio_path = Path(TMP_DIR) / f"{base_name}_start.mp3"
+        try:
+            ffmpeg.input(self.file_path, ss=0, t=self.duration_limit).output(
+                start_audio_path, acodec="mp3", audio_bitrate="192k"
+            ).run(overwrite_output=True)
+        except ffmpeg.Error as e:
+            raise ffmpeg.Error(f"Failed to extract audio: {e.stderr.decode()}", stdout=e.stdout, stderr=e.stderr) from e  # noqa: TRY003
+        else:
+            return start_audio_path
 
     def generate_label(self) -> str:
         """Generate a label by analyzing the extracted audio segments.

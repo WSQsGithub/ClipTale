@@ -40,7 +40,6 @@ class LabelerPipeline:
             clip_labeler = ClipLabeler(file_path)
             if self.rename_template:
                 clip_labeler.add_template(self.rename_template)
-            clip_labeler.read_video()
             clip_labeler.extract_audio()
             new_label = clip_labeler.generate_label()
             clip_labeler.save_label(new_label)
