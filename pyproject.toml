@@ -12,6 +12,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
+    "customtkinter>=5.2.2",
     "dotenv>=0.9.9",
 ]
 
