@@ -98,7 +98,7 @@ class ClipLabeler:
         # pass the audio to the model and generate a label
         if not self.audio_text:
             raise AudioFileNotFoundError(AudioFileNotFoundError.message.format(file_path=self.file_path))
-        try:
+        try:  # TODO: agent does not support audio files yet, have to use text
             agent_input = self.audio_text
             result = await Runner.run(starting_agent=self.labeler_agent, input=agent_input)
         except Exception as e:

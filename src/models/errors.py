@@ -29,4 +29,18 @@ class NoTemplateError(ClipLabelerError, ValueError):
 
 
 class AudioFileNotFoundError(ClipLabelerError, FileNotFoundError):
-    message = "Audio file not found for video: {file_path}"
+    def __init__(self, file_path):
+        self.message = f"Audio file not found: {file_path}"
+        super().__init__(self.message)
+
+
+class UnsupportedAudioFormatError(ClipLabelerError, ValueError):
+    def __init__(self, file_suffix):
+        self.message = f"Unsupported audio format: {file_suffix}. Supported formats are .wav and .mp3."
+        super().__init__(self.message)
+
+
+class NoAudioTranscribedError(ClipLabelerError, ValueError):
+    def __init__(self):
+        self.message = "No audio file has been transcribed yet."
+        super().__init__(self.message)
