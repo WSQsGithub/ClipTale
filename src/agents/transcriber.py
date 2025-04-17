@@ -9,7 +9,7 @@ from src.models.errors import AudioFileNotFoundError, NoAudioTranscribedError, U
 
 
 class Transcriber:
-    def __init__(self):
+    def __init__(self) -> None:
         self.audio_path: Optional[Path] = None
         self.audio_text: Optional[str] = None
         self.fyi_text: Optional[str] = None
