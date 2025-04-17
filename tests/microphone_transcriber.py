@@ -64,7 +64,7 @@ def record_audio(output_path: str, duration: int = 5):
 
 
 def main():
-    audio_file = "microphone_audio.wav"
+    audio_file = "tests/microphone_audio.wav"
     record_audio(audio_file, duration=5)
 
     transcriber = Transcriber()
