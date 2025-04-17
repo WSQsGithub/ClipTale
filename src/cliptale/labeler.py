@@ -116,4 +116,14 @@ class ClipLabeler:
             raise NoTemplateError(NoTemplateError.message)
         if not label:
             label = self.file_path.stem
-        pass
+        if not self.rename_template:
+            raise NoTemplateError(NoTemplateError.message)
+        if not label:
+            label = self.file_path.stem
+
+        # Create the new file name using the template
+        new_file_name = self.rename_template.format(label=label)
+        new_file_path = self.file_path.with_name(new_file_name)
+
+        # Rename the file
+        self.file_path.rename(new_file_path)
