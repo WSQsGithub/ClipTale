@@ -5,6 +5,7 @@ import ffmpeg
 
 from agents import Runner
 from src.agents import LabelerAgent
+from src.agents.transcriber import Transcriber  # Added import
 from src.models.errors import (
     AgentCallError,
     AudioFileNotFoundError,
@@ -77,6 +78,9 @@ class ClipLabeler:
 
         Extracts the first self.duration_limit seconds of audio.
         """
+        # Ensure TMP_DIR exists
+        Path(TMP_DIR).mkdir(parents=True, exist_ok=True)
+
         base_name = self.file_path.stem
         start_audio_path = Path(TMP_DIR) / f"{base_name}_start.mp3"
         try:
@@ -95,10 +99,23 @@ class ClipLabeler:
         Returns:
             Generated label string
         """
-        # pass the audio to the model and generate a label
+        if not self.audio_path:
+            # Ensure audio has been extracted
+            raise AudioFileNotFoundError(AudioFileNotFoundError.message.format(file_path="audio_path not set"))
+
+        try:
+            # Instantiate Transcriber and transcribe audio
+            transcriber = Transcriber()
+            self.audio_text = transcriber.transcribe(self.audio_path)
+        except Exception as e:  # TODO: Consider more specific exception handling for transcription errors
+            # Handle transcription errors
+            raise AgentCallError(f"Transcription failed: {e}") from e
+
         if not self.audio_text:
-            raise AudioFileNotFoundError(AudioFileNotFoundError.message.format(file_path=self.file_path))
-        try:  # TODO: agent does not support audio files yet, have to use text
+            # This check was originally here, kept for robustness
+            raise AudioFileNotFoundError(AudioFileNotFoundError.message.format(file_path=self.file_path)) # Or a new error type like NoTranscriptionResultError
+
+        try:
             agent_input = self.audio_text
             result = await Runner.run(starting_agent=self.labeler_agent, input=agent_input)
         except Exception as e:
@@ -106,8 +123,8 @@ class ClipLabeler:
         else:
             return result.final_output_as(str)
 
-    def save_label(self, label: Optional[str]) -> None:
-        """Save the generated label to file.
+    def save_label(self, label: Optional[str]) -> Path:
+        """Save the generated label to file and rename the file.
 
         Args:
             label: The label string to save
@@ -127,3 +144,5 @@ class ClipLabeler:
 
         # Rename the file
         self.file_path.rename(new_file_path)
+        self.file_path = new_file_path # Update the instance's file_path
+        return new_file_path # Return the new path

@@ -1,9 +1,16 @@
 from pathlib import Path
 from typing import Optional
 
-from openai import OpenAI
+import openai # Import the base openai module for error types
+from openai import OpenAI # Keep this for the client
 
-from src.models.errors import AudioFileNotFoundError, NoAudioTranscribedError, UnsupportedAudioFormatError
+from src.models.errors import (
+    AudioFileNotFoundError, 
+    NoAudioTranscribedError, 
+    UnsupportedAudioFormatError,
+    TranscriptionAuthError, # Import new custom errors
+    TranscriptionConnectionError
+)
 
 # write a transcriber agent that transcribes audio files to text using
 
@@ -34,12 +41,21 @@ class Transcriber:
 
         # Open the audio file
         if self.audio_path is not None:
-            with open(self.audio_path, "rb") as audio_file:
-                # Call the transcription API
-                transcription = self.client.audio.transcriptions.create(model="gpt-4o-transcribe", file=audio_file)
+            try:
+                with open(self.audio_path, "rb") as audio_file:
+                    # Call the transcription API
+                    transcription = self.client.audio.transcriptions.create(model="gpt-4o-transcribe", file=audio_file)
+                # Update the audio_text with the transcribed text
+                self.audio_text = transcription.text
+            except openai.AuthenticationError as e:
+                # Default message from TranscriptionAuthError will be used if not overridden here
+                raise TranscriptionAuthError() from e 
+            except openai.APIConnectionError as e:
+                # Default message from TranscriptionConnectionError will be used
+                raise TranscriptionConnectionError() from e
+            # Note: A more general openai.APIError could be caught here for other API issues
+            # and re-raised as a generic TranscriptionError if needed.
 
-        # Update the audio_text with the transcribed text
-        self.audio_text = transcription.text
         return self.audio_text or ""
 
     @property

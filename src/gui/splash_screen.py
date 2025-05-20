@@ -44,9 +44,3 @@ def start_app():
     label.pack(pady=10)
 
     app.mainloop()
-
-
-if __name__ == "__main__":
-    splash_thread = threading.Thread(target=show_splash_screen)
-    splash_thread.start()
-    start_app()

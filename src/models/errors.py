@@ -44,3 +44,23 @@ class NoAudioTranscribedError(ClipLabelerError, ValueError):
     def __init__(self):
         self.message = "No audio file has been transcribed yet."
         super().__init__(self.message)
+
+
+# --- Transcription Errors ---
+class TranscriptionError(Exception):
+    """Base class for transcription related errors."""
+    def __init__(self, message="A transcription error occurred."):
+        self.message = message
+        super().__init__(self.message)
+
+
+class TranscriptionAuthError(TranscriptionError):
+    """Raised when there's an authentication issue with the transcription service."""
+    def __init__(self, message="OpenAI API authentication failed. Please check your API key."):
+        super().__init__(message)
+
+
+class TranscriptionConnectionError(TranscriptionError):
+    """Raised when there's a connection issue with the transcription service."""
+    def __init__(self, message="Could not connect to OpenAI API. Please check your internet connection."):
+        super().__init__(message)
